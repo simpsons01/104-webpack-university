@@ -9,3 +9,10 @@
 <script>
 export default {}
 </script>
+
+<style lang="scss">
+#app {
+  break-inside: avoid;
+  display: grid;
+}
+</style>

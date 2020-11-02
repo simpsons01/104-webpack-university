@@ -1,8 +1,8 @@
-const path = require("path");
-const VueLoaderPlugin = require("vue-loader/lib/plugin");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const { CleanWebpackPlugin } = require("clean-webpack-plugin");
+const path = require("path")
+const VueLoaderPlugin = require("vue-loader/lib/plugin")
+const HtmlWebpackPlugin = require("html-webpack-plugin")
+const MiniCssExtractPlugin = require("mini-css-extract-plugin")
+const { CleanWebpackPlugin } = require("clean-webpack-plugin")
 
 module.exports = {
   entry: path.resolve(__dirname, "src/index.js"),
@@ -10,14 +10,14 @@ module.exports = {
     alias: {
       views: path.resolve(__dirname, "src/views"),
       components: path.resolve(__dirname, "src/components"),
-      assets: path.resolve(__dirname, "src/assets"),
-    },
+      assets: path.resolve(__dirname, "src/assets")
+    }
   },
   module: {
     rules: [
       {
         test: /\.vue$/,
-        use: [{ loader: "vue-loader" }],
+        use: [{ loader: "vue-loader" }]
       },
       {
         test: /\.scss$/,
@@ -25,21 +25,21 @@ module.exports = {
           "vue-style-loader",
           MiniCssExtractPlugin.loader,
           "css-loader",
-          "sass-loader",
-        ],
+          "sass-loader"
+        ]
       },
       {
         test: /\.(img|jpeg|jpg|png|gif)/,
-        use: [{ loader: "file-loader" }],
-      },
-    ],
+        use: [{ loader: "file-loader" }]
+      }
+    ]
   },
   plugins: [
     new CleanWebpackPlugin(),
     new HtmlWebpackPlugin({
       title: "104 webpack app",
-      template: path.resolve(__dirname, "public/index.html"),
+      template: path.resolve(__dirname, "public/index.html")
     }),
-    new VueLoaderPlugin(),
-  ],
-};
+    new VueLoaderPlugin()
+  ]
+}

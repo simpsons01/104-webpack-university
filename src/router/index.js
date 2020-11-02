@@ -1,9 +1,9 @@
-import Vue from "vue";
-import VueRouter from "vue-router";
-import Index from "views/Index.vue";
-import About from "views/About.vue";
+import Vue from "vue"
+import VueRouter from "vue-router"
+import Index from "views/Index.vue"
+import About from "views/About.vue"
 
-Vue.use(VueRouter);
+Vue.use(VueRouter)
 
 const router = new VueRouter({
   mode: "history",
@@ -11,14 +11,14 @@ const router = new VueRouter({
     {
       path: "/",
       name: "Index",
-      component: Index,
+      component: Index
     },
     {
       path: "/about",
       name: "About",
-      component: About,
-    },
-  ],
-});
+      component: About
+    }
+  ]
+})
 
-export default router;
+export default router

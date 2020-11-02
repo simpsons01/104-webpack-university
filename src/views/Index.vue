@@ -5,18 +5,18 @@
 </template>
 
 <script>
-import HelloWorld from "components/HelloWorld.vue";
-import isEmpty from "lodash/isEmpty";
+import HelloWorld from "components/HelloWorld.vue"
+import isEmpty from "lodash/isEmpty"
 
 export default {
   name: "Index",
   components: {
-    HelloWorld,
+    HelloWorld
   },
   mounted() {
-    console.log(isEmpty({}));
-  },
-};
+    console.log(isEmpty({}))
+  }
+}
 </script>
 
 <style lang="scss" scoped>

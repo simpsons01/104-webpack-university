@@ -1,13 +1,13 @@
-const path = require("path");
-const { merge } = require("webpack-merge");
-const webpackCommonConfig = require("./webpack.common");
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const path = require("path")
+const { merge } = require("webpack-merge")
+const webpackCommonConfig = require("./webpack.common")
+const MiniCssExtractPlugin = require("mini-css-extract-plugin")
 
 module.exports = merge(webpackCommonConfig, {
   mode: "development",
   output: {
     filename: "[name].[hash].js",
-    path: path.resolve(__dirname, "dist"),
+    path: path.resolve(__dirname, "dist")
   },
   devServer: {
     host: "127.0.0.1",
@@ -15,12 +15,12 @@ module.exports = merge(webpackCommonConfig, {
     port: 8181,
     hot: true,
     historyApiFallback: {
-      index: "index.html",
-    },
+      index: "index.html"
+    }
   },
   plugins: [
     new MiniCssExtractPlugin({
-      filename: "[name].[hash].css",
-    }),
-  ],
-});
+      filename: "[name].[hash].css"
+    })
+  ]
+})

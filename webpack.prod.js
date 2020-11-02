@@ -2,7 +2,6 @@ const { merge } = require("webpack-merge")
 const webpackCommonConfig = require("./webpack.common")
 const path = require("path")
 const MiniCssExtractPlugin = require("mini-css-extract-plugin")
-const { chunk } = require("lodash")
 
 module.exports = merge(webpackCommonConfig, {
   mode: "production",
@@ -20,8 +19,7 @@ module.exports = merge(webpackCommonConfig, {
           {
             loader: "babel-loader",
             options: {
-              presets: ["@babel/preset-env"],
-              plugins: ["@babel/plugin-transform-runtime"]
+              presets: ["@babel/preset-env"]
             }
           }
         ]
@@ -37,15 +35,9 @@ module.exports = merge(webpackCommonConfig, {
     splitChunks: {
       cacheGroups: {
         chunkVendors: {
-          name: "chunk-vendors",
+          name: "chunk-vendor",
           chunks: "all",
-          test: /[\\/]node_modules[\\/]/,
-          priority: 0
-        },
-        main: {
-          name: "mian",
-          chunks: "initial",
-          priority: -10
+          test: /[\\/]node_modules[\\/]/
         }
       }
     }

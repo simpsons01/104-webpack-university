@@ -16,8 +16,16 @@ module.exports = {
   module: {
     rules: [
       {
+        test: /\.(img|jpeg|jpg|png|gif)/,
+        use: [{ loader: "file-loader" }]
+      },
+      {
         test: /\.vue$/,
-        use: [{ loader: "vue-loader" }]
+        use: [
+          {
+            loader: "vue-loader"
+          }
+        ]
       },
       {
         test: /\.scss$/,
@@ -27,10 +35,6 @@ module.exports = {
           "css-loader",
           "sass-loader"
         ]
-      },
-      {
-        test: /\.(img|jpeg|jpg|png|gif)/,
-        use: [{ loader: "file-loader" }]
       }
     ]
   },

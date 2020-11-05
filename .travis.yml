@@ -1,0 +1,30 @@
+language: node_js
+
+version: 
+  - v10.15.1
+
+env:
+  - NODE_ENV=80
+
+cache: 
+  - node
+
+before_install:
+  - npm install
+
+
+before_deploy:
+  - echo "ready to deploy"
+
+deploy: 
+  provider: 
+   - heroku
+  apiKey: 
+   - ${HEROKU_API_KEY}
+  run:
+    - npm run build
+    - npm run start
+  skip_cleanup: true
+
+
+

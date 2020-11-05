@@ -2,17 +2,22 @@
   <div>
     <HelloWorld></HelloWorld>
     <h1>test hash chaned</h1>
+    <Foo />
   </div>
 </template>
 
 <script>
 import HelloWorld from "components/HelloWorld.vue"
 import lodash from "lodash"
+import { add } from "utility/add.js"
+import $ from "jquery"
+import moment from "moment"
 
 export default {
   name: "Index",
   components: {
-    HelloWorld
+    HelloWorld,
+    Foo: () => import(/* webpackChunkName: "Foo" */ "components/Foo.vue")
   },
   methods: {
     testEs6Promise() {
@@ -24,6 +29,9 @@ export default {
     }
   },
   async mounted() {
+    moment().format(new Date().now);
+    $("h1").style("color", "blue")
+    add(2, 3)
     const obj = { a: { b: "2" } }
     const {
       a: { b }

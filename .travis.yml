@@ -1,7 +1,7 @@
 language: node_js
 
 version: 
-  - v10.15.1
+  - 10
 
 cache: 
   - node

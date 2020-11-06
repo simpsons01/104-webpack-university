@@ -53,5 +53,28 @@ module.exports = {
       template: path.resolve(__dirname, "public/index.html")
     }),
     new VueLoaderPlugin()
-  ]
+  ],
+  optimization: {
+    runtimeChunk: "single",
+    splitChunks: {
+      cacheGroups: {
+        lib: {
+          name(module) {
+            const matchModule = module.resource.match(/(jquery|lodash|vuex|vue-router|vue)/)
+            return matchModule[0]
+          },
+          chunks: "initial",
+          test: /[\\/]node_modules[\\/](jquery|lodash|vuex|vue-router|vue)/,
+          minChunks: 1,
+          priority: -10
+        },
+        chunkVendors: {
+          name: "chunk-vendors",
+          chunks: "initial",
+          test: /[\\/]node_modules[\\/]/,
+          priority: -20
+        }
+      }
+    }
+  }
 }

@@ -13,9 +13,19 @@ module.exports = merge(webpackCommonConfig, {
     host: "127.0.0.1",
     contentBase: path.resolve(__dirname, "dist"),
     port: 8181,
-    hot: true,
+    publicPath: '/dist',
     historyApiFallback: {
-      index: "index.html"
+      verbose: true,
+      disableDotRule: true,
+      rewrites: [
+        { 
+          from: /\.(css|js|png|jpeg|gif)/, 
+          to(context) {
+            return "/dist" + context.parsedUrl.pathname;
+          }
+        },
+        { from: /./, to: '/dist/index.html' },
+      ]
     }
   },
   plugins: [

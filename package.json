@@ -7,7 +7,7 @@
     "node": "10.x"
   },
   "scripts": {
-    "serve": "webpack serve --config webpack.dev.js",
+    "serve": "webpack serve --hot --config webpack.dev.js",
     "build": "webpack --config webpack.prod.js",
     "test": "eslint --fix --ext .js,.vue src",
     "start": "node server/app.js"

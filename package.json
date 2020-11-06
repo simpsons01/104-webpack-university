@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "engines": {
+    "node": "10.x"
+  },
   "scripts": {
     "serve": "webpack serve --config webpack.dev.js",
     "build": "webpack --config webpack.prod.js",

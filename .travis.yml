@@ -1,7 +1,11 @@
 language: node_js
 
 version: 
-  - 10
+  - "10"
+
+branches:
+  only:
+  - master
 
 cache: 
   - node
@@ -23,16 +27,6 @@ deploy:
     - ${APP_NAME}
   skip_cleanup: true
 
-# jobs:
-#   include:
-#     - stage: "build"               
-#       name: "build project"        
-#       script: npm run build
-#     - stage: "start-server"
-#       name: "start-server"
-#       env: 
-#         - PORT=80
-#       script: npm run start
 
 
 

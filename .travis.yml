@@ -21,8 +21,8 @@ deploy:
     - heroku
   env: 
     - APP_NAME=webpack-104-university
-  apiKey: 
-    - ${HEROKU_API_KEY}
+  api_key: 
+    secure: ${HEROKU_API_KEY}
   app: 
     - ${APP_NAME}
   skip_cleanup: true

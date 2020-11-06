@@ -1,6 +1,6 @@
 <template>
   <div>
-    <HelloWorld></HelloWorld>
+    <HelloWorld />
     <h1>test hash chaned</h1>
     <Foo />
   </div>

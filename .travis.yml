@@ -16,13 +16,23 @@ install:
 before_deploy:
   - echo "ready to deploy"
 
-deploy: 
-  provider: 
-    - heroku
-  api_key: ${HEROKU_API_KEY}
-  app: 
-    master: webpack-104-university
-  skip_cleanup: true
+stages: 
+   - name: lint test
+     if: |
+       branch = master AND \
+       type = pull_request
+
+jobs: 
+  include:
+    - stages: lint test
+      script: "npm run test"
+    deploy: 
+      provider: 
+        - heroku
+      api_key: ${HEROKU_API_KEY}
+      app: 
+        master: webpack-104-university
+      skip_cleanup: true
 
 
 

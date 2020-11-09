@@ -3,6 +3,7 @@
     <router-link to="/about">
       about
     </router-link>
+    <p>test auto deploy</p>
     <router-view />
   </div>
 </template>

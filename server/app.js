@@ -9,10 +9,19 @@ app.use(staticFileMiddleware)
 app.use(
   history({
     verbose: true,
-    disableDotRule: true
+    disableDotRule: true,
+    rewrites: [
+      { 
+        from: /\/assets\//, 
+        to(context) {
+          return context.parsedUrl.pathname;
+        }
+      }
+    ]
   })
 )
 app.use(staticFileMiddleware)
+app.use("/assets", express.static(path.join(__dirname + "/assets")))
 
 app.get("/", function(req, res) {
   res.render(path.join(__dirname + "/dist/index.html"))

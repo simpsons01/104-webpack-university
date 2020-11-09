@@ -2,6 +2,7 @@
   <div class="about">
     this is about page
     <Foo />
+    <p>123</p>
   </div>
 </template>
 

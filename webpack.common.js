@@ -3,6 +3,7 @@ const VueLoaderPlugin = require("vue-loader/lib/plugin")
 const HtmlWebpackPlugin = require("html-webpack-plugin")
 const MiniCssExtractPlugin = require("mini-css-extract-plugin")
 const { CleanWebpackPlugin } = require("clean-webpack-plugin")
+const ESLintPlugin = require('eslint-webpack-plugin');
 
 module.exports = {
   entry: path.resolve(__dirname, "src/index.js"),
@@ -37,12 +38,6 @@ module.exports = {
           "postcss-loader",
           "sass-loader"
         ]
-      },
-      {
-        enforce: 'pre',
-        test: /\.(js|vue)$/,
-        loader: 'eslint-loader',
-        exclude: /node_modules/
       }
     ]
   },
@@ -51,6 +46,10 @@ module.exports = {
     new HtmlWebpackPlugin({
       title: "104 webpack app",
       template: path.resolve(__dirname, "public/index.html")
+    }),
+    new ESLintPlugin({
+       context: path.resolve(__dirname, "src"),
+       extensions: [".js", ".vue"]
     }),
     new VueLoaderPlugin()
   ],

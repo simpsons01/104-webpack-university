@@ -21,18 +21,20 @@ stages:
      if: |
        branch = master AND \
        type = pull_request
+   - nmae: deploy
 
 jobs: 
   include:
     - stages: lint test
       script: "npm run test"
-    deploy: 
-      provider: 
-        - heroku
-      api_key: ${HEROKU_API_KEY}
-      app: 
-        master: webpack-104-university
-      skip_cleanup: true
+    - stage: deploy
+      deploy: 
+        provider: 
+          - heroku
+        api_key: ${HEROKU_API_KEY}
+        app: 
+          master: webpack-104-university
+        skip_cleanup: true
 
 
 

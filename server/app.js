@@ -6,7 +6,9 @@ const port = process.env.PORT || 3030
 const staticFileMiddleware = express.static(path.join(__dirname + "/dist"))
 
 app.use(function(req, res, next) {
-  res.setHeader("X-Frame-Options", "ALLOW-FROM https://docs.google.com");
+  if(req.originalUrl.match(/\/assets\//)) {
+    res.setHeader("X-Frame-Options", "ALLOW-FROM https://docs.google.com");
+  }
   next();
 })
 app.use(staticFileMiddleware)

@@ -1,7 +1,7 @@
 <template>
   <div>
     <HelloWorld />
-    <h1>tewewefwfw</h1>
+    <h1>test checked</h1>
     <Foo />
   </div>
 </template>

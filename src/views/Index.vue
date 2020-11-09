@@ -2,7 +2,7 @@
   <div>
     <HelloWorld />
     <h1>test checked</h1>
-    <Foo />
+    <!-- <Foo /> -->
   </div>
 </template>
 

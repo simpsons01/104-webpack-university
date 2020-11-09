@@ -16,16 +16,12 @@ install:
 before_deploy:
   - echo "ready to deploy"
 
-stages: 
-   - name: lint test
-     if: |
-       branch = master AND \
-       type = pull_request
-   - nmae: deploy
-
 jobs: 
   include:
-    - stages: lint test
+    - stage: lint test
+      if: |
+       branch = master AND \
+       type = push
       script: "npm run test"
     - stage: deploy
       deploy: 

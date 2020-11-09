@@ -4,7 +4,6 @@
       about
     </router-link>
     <router-view />
-    swefwefe
   </div>
 </template>
 

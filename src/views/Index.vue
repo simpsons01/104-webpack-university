@@ -1,7 +1,7 @@
 <template>
   <div>
     <HelloWorld />
-    <h1>test hash chaned</h1>
+    <h1>tewewefwfw</h1>
     <Foo />
   </div>
 </template>
@@ -30,7 +30,7 @@ export default {
   },
   async mounted() {
     moment().format(new Date().now);
-    $("h1").style("color", "blue")
+    // $("h1").style("color", "blue")
     add(2, 3)
     const obj = { a: { b: "2" } }
     const {

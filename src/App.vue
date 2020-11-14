@@ -9,7 +9,13 @@
 </template>
 
 <script>
-export default {}
+export default {
+  methods: {
+    addFuncA() {
+      console.log("add func a")
+    }
+  }
+}
 </script>
 
 <style lang="scss">

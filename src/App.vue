@@ -17,6 +17,9 @@ export default {
     addFuncB() {
       console.log("add func b")
     },
+    addFuncC() {
+      console.log("add func c")
+    },
   }
 }
 </script>

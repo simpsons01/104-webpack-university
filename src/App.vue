@@ -13,7 +13,10 @@ export default {
   methods: {
     addFuncA() {
       console.log("add func a")
-    }
+    },
+    addFuncB() {
+      console.log("add func b")
+    },
   }
 }
 </script>

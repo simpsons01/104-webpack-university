@@ -5,11 +5,29 @@
     </router-link>
     <p>test auto deploy</p>
     <router-view />
+    <Foo 
+     :test="test"
+    />
   </div>
 </template>
 
 <script>
-export default {}
+import Foo from "components/Foo.vue"
+export default {
+  data() {
+    return {
+      test: 2
+    }
+  },
+  components: {
+    Foo
+  },
+  mounted() {
+    setTimeout(()=>{
+      this.test = 4
+    }, 2000)
+  }
+}
 </script>
 
 <style lang="scss">

@@ -6,7 +6,10 @@ const { CleanWebpackPlugin } = require("clean-webpack-plugin")
 const ESLintPlugin = require('eslint-webpack-plugin');
 
 module.exports = {
-  entry: path.resolve(__dirname, "src/index.js"),
+  entry: [
+    path.resolve(__dirname, "src/index.js"),
+    path.resolve(__dirname, "src/index2.js"),
+  ],
   resolve: {
     alias: {
       views: path.resolve(__dirname, "src/views"),

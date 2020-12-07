@@ -2,11 +2,10 @@
 
 .VCalendar {
   position: relative;
-  display: inline-block;
   overflow: hidden;
-  margin: 30px;
+  margin: 150px auto;
   padding: 3px 10px;
-  width: 250px;
+  width: 120px;
   height: 40px;
   background-color: $gray;
   border-radius: 6px;
@@ -14,16 +13,18 @@
     display: flex;
     &__start,
     &__end {
-      padding: 9px;
-      max-width: 50%;
+      box-sizing: border-box;
+      padding: 12px 14px;
+      max-width: 100%;
       font-size: 12px;
-      text-align: center;
+      // text-align: center;
       background-color: $gray;
       border: 0;
       outline: none;
       appearance: none;
-      flex: 0 0 50%;
+      flex: 1 0 auto;
       line-height: 16px;
+      letter-spacing: 1.5px;
     }
     &__tilde {
       position: absolute;

@@ -1,9 +1,13 @@
 <template>
   <div
+    ref="VCalendar__panel"
     class="VCalendar__panel"
     :style="{
       left: `${left}px`,
       top: `${top}px`
+    }"
+    :class="{
+      expand: isMounted
     }"
   >
     <div class="VCalendar__panel__previous">
@@ -13,7 +17,7 @@
            <button @click="setCurrentDateAndMonthListByYear(-1)">&#171;</button>
          </div>
          <div class="VCalendar__panel__previous__top__control__center">
-            {{ currentYear }} 年 {{ currentMonth + 1 }} 月
+            {{ topControlText }}
          </div>
          <div class="VCalendar__panel__previous__top__control__right">
            <button @click="setCurrentDateAndMonthListByYear(1)">&#187;</button>
@@ -30,11 +34,13 @@
        </div>
        <div class="VCalendar__panel__previous__date__wrapper">
           <div
-            v-for="(item, index) in monthDateList"
+            v-for="(item, index) in calcMonthList"
             :key="index"
             :class="{
-              disabled: item.month  !== currentMonth + 1
+              disabled: item.disabled,
+              active: item.active
             }"
+            @click="onDatePick(item)"
           >
            {{ item.date }}
           </div>
@@ -47,7 +53,20 @@
 const panelMaxItems = 42;
 
 export default {
-  props: ['left', 'top'],
+  props: {
+    left: {
+      type: Number,
+      default: 0
+    }, 
+    top: {
+      type: Number,
+      default: 0
+    },
+    defaultVal: {
+      type: String,
+      default: ""
+    }
+  },
   data() {
     return {
       weeks: [
@@ -80,6 +99,7 @@ export default {
           text: '六',
         },
       ],
+      isMounted: false,
       currentYear: 0,
       currentMonth: 0,
       currentDate: 0,
@@ -87,16 +107,46 @@ export default {
     };
   },
   mounted() {
-    const date = new Date()
-    this.setCurrnetDate(
-      date.getFullYear(),
-      date.getMonth(),
-      date.getDate()
-    )
+    if(this.calcDefaultVal.every(x => x > 0)) {
+      this.setCurrnetDate(
+        this.calcDefaultVal[0],
+        this.calcDefaultVal[1] - 1,
+        this.calcDefaultVal[2]
+      )
+    }else {
+      const dateObj = new Date()
+      this.setCurrnetDate(
+        dateObj.getFullYear(),
+        dateObj.getMonth(),
+        dateObj.getDate()
+      )
+    }
     this.setCurrentMonthList(
       this.currentYear,
       this.currentMonth
     )
+  },
+  computed: {
+    topControlText() {
+      return this.currentYear  + "年" + (this.currentMonth * 1 + 1) + "月"
+    },
+    calcDefaultVal() {
+      const [year, month, date] = this.defaultVal ? this.defaultVal.split("/") : [-1, -1, -1] 
+      return [year * 1, month * 1, date * 1]
+    },
+    calcMonthList() {
+      return this.monthDateList.map(item => {
+        return {
+          ...item,
+          disabled: item.month !== this.currentMonth + 1,
+          active: (
+            item.year === this.calcDefaultVal[0] &&
+            item.month === this.calcDefaultVal[1] &&
+            item.date === this.calcDefaultVal[2]
+          )
+        }
+      })
+    }
   },
   methods: {
     getMonthList(calcYear, calcMonth) {
@@ -105,11 +155,12 @@ export default {
         calcMonth,
         1
       );
+      const firstDayInWeek = firsDayInCurrentMonth.getDay()
       const dayBeforeFirsDayInCurrentMonth = new Date(
         calcYear,
         calcMonth,
-        1 - firsDayInCurrentMonth.getDay()
-      );
+        (1 - (firstDayInWeek ? firstDayInWeek : 7))
+      )
       const year = dayBeforeFirsDayInCurrentMonth.getFullYear()
       const month = dayBeforeFirsDayInCurrentMonth.getMonth()
       const date =  dayBeforeFirsDayInCurrentMonth.getDate()
@@ -171,6 +222,9 @@ export default {
         year,
         month
       )
+    },
+    onDatePick(val) {
+      this.$emit("onDatePick", val)
     }
   }
 };
@@ -184,7 +238,7 @@ export default {
   background-color: $white;
   box-shadow: 0 0 4px 0 #a9a9a9;
   &__previous {
-    padding: 15px;
+    padding: 15px 20px;
     width: 300px;
     color: #292929;
     &__top__control {
@@ -197,6 +251,7 @@ export default {
           border: 0;
           outline: none;
           line-height: 18px;
+          cursor: pointer;
         }
       }
       &__center {
@@ -220,15 +275,39 @@ export default {
       display: flex;
       flex-wrap: wrap;
       > div {
-        padding-bottom: 8px;
+        padding-bottom: 10px;
         max-width: (100% / 7);
         font-size: 12px;
         text-align: center;
         flex: 0 0 (100% / 7);
-
+        cursor: pointer;
+        position: relative;
+        z-index: 1;
+        &:hover {
+          color: #409eff
+        }
         &.disabled {
           color: #ddd
         }
+        &.active {
+          color: $white;
+          &::before {
+            content: "";
+            display: inline-block;
+            position: absolute;
+            left: 51%;
+            top: 32%;
+            transform: translate(-50%, -50%);
+            background-color:#409eff;
+            border-radius: 100%;
+            z-index: -1;
+            width: 25px;
+            height: 25px;
+          }
+        }
+      }
+      > div:nth-child(n + 36) {
+        padding-bottom: 0;
       }
     }
   }

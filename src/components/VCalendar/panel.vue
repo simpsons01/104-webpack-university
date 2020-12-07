@@ -38,7 +38,8 @@
             :key="index"
             :class="{
               disabled: item.disabled,
-              active: item.active
+              active: item.active,
+              isToday: item.isToday
             }"
             @click="onDatePick(item)"
           >
@@ -100,6 +101,9 @@ export default {
         },
       ],
       isMounted: false,
+      nowYear: 0,
+      nowMonth: 0,
+      nowDate: 0,
       currentYear: 0,
       currentMonth: 0,
       currentDate: 0,
@@ -107,6 +111,10 @@ export default {
     };
   },
   mounted() {
+    const dateObj = new Date()
+    this.nowYear = dateObj.getFullYear(),
+    this.nowMonth = dateObj.getMonth(),
+    this.nowDate = dateObj.getDate()
     if(this.calcDefaultVal.every(x => x > 0)) {
       this.setCurrnetDate(
         this.calcDefaultVal[0],
@@ -114,11 +122,10 @@ export default {
         this.calcDefaultVal[2]
       )
     }else {
-      const dateObj = new Date()
       this.setCurrnetDate(
-        dateObj.getFullYear(),
-        dateObj.getMonth(),
-        dateObj.getDate()
+        this.nowYear,
+        this.nowMonth,
+        this.nowDate
       )
     }
     this.setCurrentMonthList(
@@ -143,6 +150,11 @@ export default {
             item.year === this.calcDefaultVal[0] &&
             item.month === this.calcDefaultVal[1] &&
             item.date === this.calcDefaultVal[2]
+          ),
+          isToday: (
+            item.year === this.nowYear &&
+            item.month === this.nowMonth + 1 &&
+            item.date === this.nowDate
           )
         }
       })
@@ -303,7 +315,7 @@ export default {
         cursor: pointer;
         position: relative;
         z-index: 1;
-        &:hover {
+        &:hover, &.isToday {
           color: #409eff
         }
         &.disabled {

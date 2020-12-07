@@ -4,12 +4,13 @@
   position: relative;
   overflow: hidden;
   margin: 150px auto;
-  padding: 3px 10px;
-  width: 120px;
+  padding: 4px 10px;
+  width: 180px;
   height: 40px;
   background-color: $gray;
-  box-sizing: border-box;
   border-radius: 6px;
+  box-sizing: border-box;
+  border: 1px solid $gray;
   &.active {
     border: 1px solid  #409eff
   }
@@ -18,7 +19,7 @@
     &__start,
     &__end {
       box-sizing: border-box;
-      padding: 12px 14px;
+      padding: 7px 14px;
       max-width: 100%;
       font-size: 12px;
       // text-align: center;

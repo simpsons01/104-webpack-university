@@ -6,7 +6,7 @@ export default {
   name: 'VCalendar',
   data() {
     return {
-      isPannelShow: false,
+      isPanelShow: false,
       pannelEl: null,
       selectedVal: {
         year: 0,
@@ -26,7 +26,7 @@ export default {
     }
   },
   watch: {
-    isPannelShow(newVal) {
+    isPanelShow(newVal) {
       if(newVal) {
        this.appendPannel()
        document.addEventListener("click", this.onDocumentClickHandler)
@@ -38,7 +38,7 @@ export default {
   },
   methods: {
     togglePanel() {
-      this.isPannelShow = !this.isPannelShow
+      this.isPanelShow = !this.isPanelShow
     },
     async appendPannel() {
       await this.$nextTick();
@@ -68,14 +68,14 @@ export default {
     async onDatePickeHandler(val) {
       this.selectedVal = { ...val }
       await this.$nextTick()
-      this.isPannelShow = false
+      this.isPanelShow = false
     },
     onDocumentClickHandler(e) {
       if(
         this.pannelEl.$refs["VCalendar__panel"].contains(e.target) ||
         this.$refs["VCalendar"].contains(e.target)
       ) return
-      this.isPannelShow = false
+      this.isPanelShow = false
     }
   }
 };

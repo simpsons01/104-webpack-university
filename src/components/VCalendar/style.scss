@@ -8,7 +8,11 @@
   width: 120px;
   height: 40px;
   background-color: $gray;
+  box-sizing: border-box;
   border-radius: 6px;
+  &.active {
+    border: 1px solid  #409eff
+  }
   &__input {
     display: flex;
     &__start,

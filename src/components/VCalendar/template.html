@@ -1,4 +1,10 @@
-<div ref="VCalendar" class="VCalendar">
+<div 
+  ref="VCalendar" 
+  class="VCalendar"
+  :class="{
+    active: isPanelShow
+  }"
+>
   <div 
     class="VCalendar__input"
     @click="togglePanel"

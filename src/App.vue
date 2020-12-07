@@ -1,18 +1,11 @@
 <template>
   <div id="app">
-    <router-link to="/about">
-      about
-    </router-link>
-    <p>test auto deploy</p>
-    <router-view />
-    <Foo 
-     :test="test"
-    />
+    <VCalendar />
   </div>
 </template>
 
 <script>
-import Foo from "components/Foo.vue"
+import VCalendar from "components/VCalendar/index.vue"
 export default {
   data() {
     return {
@@ -20,7 +13,7 @@ export default {
     }
   },
   components: {
-    Foo
+    VCalendar
   },
   mounted() {
     setTimeout(()=>{

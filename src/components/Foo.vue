@@ -8,7 +8,7 @@
 
 <script>
 import { add } from "utility/add.js"
-import BigText from "components/BigText"
+import BigText from "components/BigText.vue"
 export default {
   name: "Foo",
   props:["test"],

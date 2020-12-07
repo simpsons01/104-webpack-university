@@ -1,0 +1,35 @@
+@import './variables';
+
+.VCalendar {
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+  margin: 30px;
+  padding: 3px 10px;
+  width: 250px;
+  height: 40px;
+  background-color: $gray;
+  border-radius: 6px;
+  &__input {
+    display: flex;
+    &__start,
+    &__end {
+      padding: 9px;
+      max-width: 50%;
+      font-size: 12px;
+      text-align: center;
+      background-color: $gray;
+      border: 0;
+      outline: none;
+      appearance: none;
+      flex: 0 0 50%;
+      line-height: 16px;
+    }
+    &__tilde {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+  }
+}

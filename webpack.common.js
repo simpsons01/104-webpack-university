@@ -6,10 +6,9 @@ const { CleanWebpackPlugin } = require("clean-webpack-plugin")
 const ESLintPlugin = require('eslint-webpack-plugin');
 
 module.exports = {
-  entry: [
-    path.resolve(__dirname, "src/index.js"),
-    path.resolve(__dirname, "src/index2.js"),
-  ],
+  entry: {
+    index: path.resolve(__dirname, "src/index.js")
+  },
   resolve: {
     alias: {
       views: path.resolve(__dirname, "src/views"),
@@ -48,7 +47,7 @@ module.exports = {
     new CleanWebpackPlugin(),
     new HtmlWebpackPlugin({
       title: "104 webpack app",
-      template: path.resolve(__dirname, "public/index.html")
+      template: path.resolve(__dirname, "public/index.html"),
     }),
     new ESLintPlugin({
        context: path.resolve(__dirname, "src"),
@@ -75,7 +74,13 @@ module.exports = {
           chunks: "initial",
           test: /[\\/]node_modules[\\/]/,
           priority: -20
-        }
+        },
+        chunkCommon: {
+          name: "chunk-common",
+          chunks: "initial",
+          minChunks: 1,
+          priority: -20
+        },
       }
     }
   }

@@ -1,4 +1,4 @@
-const panelMaxItems = 42;
+import { panelMaxItems } from "./enum"
 
 export default {
   data() {

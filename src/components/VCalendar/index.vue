@@ -53,7 +53,7 @@ export default {
   props: {
     rangeOn: {
       type: Boolean,
-      default: true,
+      default: false,
     },
   },
   components: {

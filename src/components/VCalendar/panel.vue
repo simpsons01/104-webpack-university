@@ -246,26 +246,7 @@ export default {
 @import  './variables';
 
 .VCalendar__panel {
-  position: absolute;
   background-color: $white;
-  box-shadow: 0 0 4px 0 #a9a9a9;
-  transform: translateY(15px);
-  z-index: 9999;
-  &::before {
-    content: "";
-    display: inline-block;
-    position: absolute;
-    top: -5px;
-    left: 10px;
-    width: 0;
-    height: 0;
-    border-style: solid;
-    border-width: 10px 10px 0 0;
-    border-color: #fff #fff transparent transparent;
-    box-shadow: -1px -1px 2px #d4d1d1;
-    transform: rotate(45deg);
-    z-index: -1;
-  }
   &__previous {
     padding: 20px;
     width: 300px;

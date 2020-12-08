@@ -8,6 +8,12 @@ export default {
       nowDate: 0,
     }
   },
+  mounted() {
+    const dateObj = new Date()
+    this.nowYear = dateObj.getFullYear(),
+    this.nowMonth = dateObj.getMonth(),
+    this.nowDate = dateObj.getDate()
+  },
   methods: {
     getMonthList(calcYear, calcMonth) {
       const firsDayInCurrentMonth = new Date(

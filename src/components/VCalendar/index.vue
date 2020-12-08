@@ -35,6 +35,7 @@
         <Panel
           ref="VCalendar__panel"
           :defaultVal="inputViewText"
+          :isRangeOn="rangeOn"
           @onDatePick="onDatePickeHandler"
         />
       </div>
@@ -145,9 +146,6 @@ export default {
       opacity: 1;
     }
   }
-  &.active &__input__tilde {
-    color: $black
-  }
   &__input {
     display: flex;
     &.multi &__start, &.multi &__end {
@@ -184,6 +182,7 @@ export default {
     transform: translateY(100%);
     transform-origin: top;
     box-shadow: 0 0 4px 0 #a9a9a9;
+    display: flex;
     &::before {
       content: "";
       display: inline-block;

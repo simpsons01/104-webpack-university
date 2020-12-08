@@ -10,21 +10,21 @@
       expand: isMounted
     }"
   >
-    <div class="VCalendar__panel__previous">
-       <div class="VCalendar__panel__previous__top__control">
-         <div class="VCalendar__panel__previous__top__control__left">
+    <div class="VCalendar__panel__container">
+       <div class="VCalendar__panel__container__top__control">
+         <div class="VCalendar__panel__container__top__control__left">
            <button @click="setCurrentDateAndMonthListByMonth(-1)">&#8249;</button>
            <button @click="setCurrentDateAndMonthListByYear(-1)">&#171;</button>
          </div>
-         <div class="VCalendar__panel__previous__top__control__center">
+         <div class="VCalendar__panel__container__top__control__center">
             {{ topControlText }}
          </div>
-         <div class="VCalendar__panel__previous__top__control__right">
+         <div class="VCalendar__panel__container__top__control__right">
            <button @click="setCurrentDateAndMonthListByYear(1)">&#187;</button>
            <button @click="setCurrentDateAndMonthListByMonth(1)">&#8250;</button>
          </div>
        </div>
-       <div class="VCalendar__panel__previous__week">
+       <div class="VCalendar__panel__container__week">
           <div
             v-for="(week, index) in weeks"
             :key="index"
@@ -32,7 +32,7 @@
             {{ week.text }}
           </div>
        </div>
-       <div class="VCalendar__panel__previous__date__wrapper">
+       <div class="VCalendar__panel__container__date__wrapper">
           <div
             v-for="(item, index) in calcMonthList"
             :key="index"
@@ -55,17 +55,13 @@ const panelMaxItems = 42;
 
 export default {
   props: {
-    left: {
-      type: Number,
-      default: 0
-    }, 
-    top: {
-      type: Number,
-      default: 0
-    },
     defaultVal: {
       type: String,
       default: ""
+    },
+    isRangeOn: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -108,6 +104,17 @@ export default {
       currentMonth: 0,
       currentDate: 0,
       monthDateList: [],
+      // rangeOn property
+      startPickeDate: {
+        year: 0,
+        month: 0,
+        date: 0
+      },
+      endPickDate: {
+        year: 0,
+        month: 0,
+        date: 0
+      }
     };
   },
   mounted() {
@@ -247,7 +254,7 @@ export default {
 
 .VCalendar__panel {
   background-color: $white;
-  &__previous {
+  &__container {
     padding: 20px;
     width: 300px;
     color: #292929;

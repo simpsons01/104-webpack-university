@@ -45,27 +45,47 @@ export default {
     },
     getNewDateByMonth(y, m, c, add) {
       const dateObj = new Date(
-        y + add,
-        m,
-        c
-      )
-      return {
-        year: dateObj.getFullYear(),
-        mont: dateObj.getMonth(),
-        date: dateObj.getDate()
-      }
-    },
-    getNewDateYear(y, m, c, add) {
-      const dateObj = new Date(
         y,
         m + add,
         c
       )
       return {
         year: dateObj.getFullYear(),
-        mont: dateObj.getMonth(),
+        month: dateObj.getMonth(),
         date: dateObj.getDate()
       }
+    },
+    getNewDateByYear(y, m, c, add) {
+      const dateObj = new Date(
+        y + add,
+        m,
+        c
+      )
+      return {
+        year: dateObj.getFullYear(),
+        month: dateObj.getMonth(),
+        date: dateObj.getDate()
+      }
+    },
+    getIsDateBeHindCompareDate(a, b) {
+      return (
+        new Date(a.year, a.month, a.date).getTime() > new Date(b.year, b.month, b.date).getTime()
+      )
+    },
+    formatMonthListHelper(
+      ary,
+      currentMonth,
+      currentTimeStr
+    ) {
+      return ary.map(item => {
+        return {
+          ...item,
+          disabled: item.month !== currentMonth + 1,
+          isToday: (
+            `${item.year}/${item.month}/${item.date}` === currentTimeStr
+          )
+        }
+      })
     }
   }
 }

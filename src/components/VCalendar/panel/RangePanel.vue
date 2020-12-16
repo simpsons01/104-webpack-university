@@ -28,7 +28,7 @@
             disabled: item.disabled,
             active: item.active,
             isToday: item.isToday,
-            inrange: item.isInHoverRange,
+            inrange: item.isInRange,
           }"
           @click="onDatePick(item)"
           @mouseover="onDateHover(item)"
@@ -63,9 +63,9 @@
           :key="index"
           :class="{
             disabled: item.disabled,
-            active: item.active,
+            active:  item.active,
             isToday: item.isToday,
-            inrange: item.isInHoverRange,
+            inrange: item.isInRange,
           }"
           @click="onDatePick(item)"
           @mouseover="onDateHover(item)"
@@ -78,18 +78,27 @@
 </template>
 
 <script>
-import panelMixin from "./mixin";
-import { weeks } from "./enum";
+import panelMixin from "../lib/mixin";
+import { weeks } from "../lib/enum";
+import { 
+  getMonthList,
+  getNewDateByMonth,
+  getNewDateByYear,
+  getIsDateBeHindCompareDate,
+  stringifyDate,
+  parseStrDate,
+  validDate
+} from "../lib/utility"
 
 export default {
   props: {
     defaultStartVal: {
-      type: String,
-      default: "",
+      type: Object,
+      default: () => ({ year: 0, month: 0, date: 0 }),
     },
     defaultEndVal: {
-      type: String,
-      default: "",
+      type: Object,
+      default: () => ({ year: 0, month: 0, date: 0 }),
     },
   },
   mixins: [panelMixin],
@@ -118,32 +127,47 @@ export default {
         month: 0,
         date: 0,
       },
-      hoverDate: {
-        year: 0,
-        month: 0,
-        date: 0,
-      },
       isStartPickRange: false,
     };
   },
   mounted() {
-    this.setCurrnetDate("previous", this.nowYear, this.nowMonth, this.nowDate);
-    this.setCurrentMonthList("previous", this.nowYear, this.nowMonth);
-    const nextMonthDateObj = new Date(
-      this.nowYear,
-      this.nowMonth + 1,
-      this.nowDate
+    let isDefaulPropValid = false
+    if(
+      validDate(this.defaultStartVal) && 
+      validDate(this.defaultEndVal) 
+    ) {
+      this.startPickDate = { ...this.defaultStartVal }
+      this.endPickDate = { ...this.defaultEndVal }
+      isDefaulPropValid = true
+    }
+    let baseStartDate = isDefaulPropValid ? this.startPickDate : this.now
+    this.setCurrnetDate(
+      "previous", 
+      baseStartDate.year, 
+      baseStartDate.month, 
+      baseStartDate.date
+    );
+    this.setCurrentMonthList(
+      "previous", 
+      baseStartDate.year, 
+      baseStartDate.month
+    );
+    const nextMonthDateObj = getNewDateByMonth(
+      baseStartDate.year, 
+      baseStartDate.month, 
+      baseStartDate.date,
+      1
     );
     this.setCurrnetDate(
       "present",
-      nextMonthDateObj.getFullYear(),
-      nextMonthDateObj.getMonth(),
-      nextMonthDateObj.getDate()
+      nextMonthDateObj.year,
+      nextMonthDateObj.month,
+      nextMonthDateObj.date
     );
     this.setCurrentMonthList(
       "present",
-      nextMonthDateObj.getFullYear(),
-      nextMonthDateObj.getMonth()
+      nextMonthDateObj.year,
+      nextMonthDateObj.month
     );
   },
   computed: {
@@ -163,69 +187,63 @@ export default {
         "月"
       );
     },
-    calcStartPickDateStr() {
-      return `${this.startPickDate.year}/${this.startPickDate.month}/${this.startPickDate.date}`;
-    },
-    calcEndPickDateStr() {
-      return `${this.endPickDate.year}/${this.endPickDate.month}/${this.endPickDate.date}`;
-    },
-    calcStartDefaultVal() {
-      const [year, month, date] = this.defaultStartVal
-        ? this.defaultStartVal.split("/")
-        : [-1, -1, -1];
-      return [year * 1, month * 1, date * 1];
-    },
-    calcEndDefaultVal() {
-      const [year, month, date] = this.defaultEndVal
-        ? this.defaultEndVal.split("/")
-        : [-1, -1, -1];
-      return [year * 1, month * 1, date * 1];
-    },
     calcPreviousMonthList() {
       return this.formatMonthListHelper(
         this.previousMonthDateList,
-        this.previous.currentMonth,
-        `${this.nowYear}/${this.nowMonth}/${this.nowDate}`
+        this.previous.currentMonth
       ).map((item) => {
         const dateStr = `${item.year}/${item.month}/${item.date}`;
         const active =
-          this.calcStartPickDateStr === dateStr ||
-          this.calcEndPickDateStr === dateStr;
+          stringifyDate(this.startPickDate) === stringifyDate(item) ||
+          stringifyDate(this.endPickDate) === stringifyDate(item);
         return {
           ...item,
           active,
-          isInHoverRange:
-            this.isStartPickRange &&
+          isInRange: (
             !item.disabled &&
             !active &&
-            this.getIsDateBeHindCompareDate(this.hoverDate, item),
+            !getIsDateBeHindCompareDate(this.startPickDate, item) &&
+            getIsDateBeHindCompareDate(this.endPickDate, item)
+          ),
         };
       });
     },
     calcPresentMonthList() {
       return this.formatMonthListHelper(
         this.presentMonthDateList,
-        this.present.currentMonth,
-        "",
-        `${this.nowYear}/${this.nowMonth}/${this.nowDate}`
+        this.present.currentMonth
       ).map((item) => {
-        const dateStr = `${item.year}/${item.month}/${item.date}`;
         const active =
-          this.calcStartPickDateStr === dateStr ||
-          this.calcEndPickDateStr === dateStr;
+          stringifyDate(this.startPickDate) === stringifyDate(item) ||
+          stringifyDate(this.endPickDate) === stringifyDate(item);
         return {
           ...item,
           active,
-          isInHoverRange:
-            this.isStartPickRange &&
+          isInRange: (
             !item.disabled &&
             !active &&
-            this.getIsDateBeHindCompareDate(this.hoverDate, item),
+            !getIsDateBeHindCompareDate(this.startPickDate, item) &&
+            getIsDateBeHindCompareDate(this.endPickDate, item)
+          ),
         };
       });
     },
   },
   methods: {
+    formatMonthListHelper(
+      ary,
+      currentMonth
+    ) {
+      return ary.map(item => {
+        return {
+          ...item,
+          disabled: item.month !== currentMonth,
+          isToday: (
+            stringifyDate(item) === stringifyDate(this.now)
+          )
+        }
+      })
+    },
     setCurrnetDate(type, year, month, date) {
       const obj = {
         currentYear: year,
@@ -240,9 +258,9 @@ export default {
     },
     setCurrentMonthList(type, year, month) {
       if (type === "previous") {
-        this.previousMonthDateList = this.getMonthList(year, month);
+        this.previousMonthDateList = getMonthList(year, month);
       } else {
-        this.presentMonthDateList = this.getMonthList(year, month);
+        this.presentMonthDateList = getMonthList(year, month);
       }
     },
     setCurrentDateAndMonthListByMonth(add) {
@@ -250,7 +268,7 @@ export default {
         year: previousY,
         month: previousM,
         date: previousD,
-      } = this.getNewDateByMonth(
+      } = getNewDateByMonth(
         this.previous.currentYear,
         this.previous.currentMonth,
         this.previous.currentDate,
@@ -260,7 +278,7 @@ export default {
         year: presentY,
         month: presentM,
         date: presentD,
-      } = this.getNewDateByMonth(previousY, previousM, previousD, 1);
+      } = getNewDateByMonth(previousY, previousM, previousD, 1);
       this.setCurrnetDate("previous", previousY, previousM, previousD);
       this.setCurrnetDate("present", presentY, presentM, presentD);
       this.setCurrentMonthList("previous", previousY, previousM);
@@ -271,7 +289,7 @@ export default {
         year: previousY,
         month: previousM,
         date: previousD,
-      } = this.getNewDateByYear(
+      } = getNewDateByYear(
         this.previous.currentYear,
         this.previous.currentMonth,
         this.previous.currentDate,
@@ -281,7 +299,7 @@ export default {
         year: presentY,
         month: presentM,
         date: presentD,
-      } = this.getNewDateByYear(previousY, previousM, previousD, 1);
+      } = getNewDateByYear(previousY, previousM, previousD, 1);
       this.setCurrnetDate("previous", previousY, previousM, previousD);
       this.setCurrnetDate("present", presentY, presentM, presentD);
       this.setCurrentMonthList("previous", previousY, previousM);
@@ -290,20 +308,20 @@ export default {
     onDatePick({ year, month, date }) {
       if (!this.isStartPickRange) {
         this.isStartPickRange = true;
-        this.endPickDate = { year: "", month: "", date: "" };
+        this.endPickDate = { year: 0, month: 0, date: 0 };
         this.startPickDate = { year, month, date };
         return;
       } else {
         this.endPickDate = { year, month, date };
         this.$emit("onDatePick", {
-          start: `${this.startPickDate.year}/${this.startPickDate.month}/${this.startPickDate.date}`,
-          end: `${this.endPickDate.year}/${this.endPickDate.month}/${this.endPickDate.date}`,
+          start: this.startPickDate,
+          end: this.endPickDate,
         });
       }
     },
     onDateHover({ year, month, date, disabled}) {
-      if(this.isStartPickRange && disabled) return
-      this.hoverDate = { year, month, date };
+      if(!this.isStartPickRange || disabled) return
+      this.endPickDate = { year, month, date };
     },
   },
 };
@@ -385,13 +403,11 @@ export default {
       flex-wrap: wrap;
 
       &.startPick {
-        > div:not(.disabled):hover{
+        > div:not(.disabled):hover {
           @extend %active;
           &::after {
             left: 0px;
-            right: 10px;
-            border-top-right-radius: 10px;
-            border-bottom-right-radius: 10px;
+            right: 5px;
           }
         }
       }
@@ -414,10 +430,8 @@ export default {
         &.active {
           @extend %active;
           &::after {
-            left: 10px;
+            left: 5px;
             right: 0px;
-            border-top-left-radius: 10px;
-            border-bottom-left-radius: 10px;
           }
         }
         &.inrange {

@@ -28,5 +28,3 @@ export const weeks = [
     text: '六',
   },
 ]
-
-export const panelMaxItems = 42;

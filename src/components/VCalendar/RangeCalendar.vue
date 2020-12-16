@@ -16,7 +16,7 @@
         type="text"
         autocomplete="off"
         readonly
-        :value="startDate"
+        :value="viewStartDate"
       />
       <span class="VCalendar__input__tilde">~</span>
       <input
@@ -24,13 +24,15 @@
         type="text"
         autocomplete="off"
         readonly
-        :value="endDate"
+        :value="viewEndDate"
       />
     </div>
     <transition name="panel">
       <div class="VCalendar__panel__wrapper" v-if="isPanelShow">
         <RangePanel
           ref="VCalendar__panel"
+          :defaultStartVal="startDate"
+          :defaultEndVal="endDate"
           @onDatePick="onDatePick"
         />
       </div>
@@ -41,6 +43,12 @@
 
 <script>
 import RangePanel from "./panel/RangePanel.vue";
+import { 
+  stringifyDate,
+  parseStrDate,
+  validDate
+} from "./lib/utility"
+
 
 export default {
   name: "RangeCalendar",
@@ -50,12 +58,33 @@ export default {
   data() {
     return {
       isPanelShow: false,
-      startDate: "",
-      endDate: ""
+      startDate: {
+        year: 0,
+        month: 0,
+        date: 0
+      },
+      endDate: {
+        year: 0,
+        month: 0,
+        date: 0
+      },
     };
   },
   computed: {
-   
+     viewStartDate() {
+       const date = {
+         ...this.startDate,
+         month: this.startDate.month + 1
+       }
+       return validDate(this.startDate) ? stringifyDate(date) : ""
+     },
+     viewEndDate() {
+       const date = {
+         ...this.endDate,
+         month: this.endDate.month + 1
+       }
+       return validDate(this.endDate) ? stringifyDate(date) : ""
+     }
   },
   watch: {
     isPanelShow(newVal) {
@@ -79,8 +108,8 @@ export default {
       this.isPanelShow = false;
     },
     onDatePick({ start, end }) {
-      this.startDate = start
-      this.endDate = end
+      this.startDate = { ...start }
+      this.endDate = { ...end }
       this.isPanelShow = false
     }
   },

@@ -15,12 +15,7 @@
           {{ week.text }}
         </div>
       </div>
-      <div
-        class="VCalendar__panel__previous__date__wrapper"
-        :class="{
-          startPick: isStartPickRange,
-        }"
-      >
+      <div class="VCalendar__panel__previous__date__wrapper">
         <div
           v-for="(item, index) in calcPreviousMonthList"
           :key="index"
@@ -29,8 +24,10 @@
             active: item.active,
             isToday: item.isToday,
             inrange: item.isInRange,
+            equalFirst: item.equalFirst,
+            equalLast: item.equalLast
           }"
-          @click="onDatePick(item)"
+          @click="onDatePick(item, $event)"
           @mouseover="onDateHover(item)"
         >
           {{ item.date }}
@@ -52,22 +49,19 @@
           {{ week.text }}
         </div>
       </div>
-      <div
-        class="VCalendar__panel__present__date__wrapper"
-        :class="{
-          startPick: isStartPickRange,
-        }"
-      >
+      <div class="VCalendar__panel__present__date__wrapper">
         <div
           v-for="(item, index) in calcPresentMonthList"
           :key="index"
           :class="{
             disabled: item.disabled,
-            active:  item.active,
+            active: item.active,
             isToday: item.isToday,
             inrange: item.isInRange,
+            equalFirst: item.equalFirst,
+            equalLast: item.equalLast
           }"
-          @click="onDatePick(item)"
+          @click="onDatePick(item, $event)"
           @mouseover="onDateHover(item)"
         >
           {{ item.date }}
@@ -80,15 +74,15 @@
 <script>
 import panelMixin from "../lib/mixin";
 import { weeks } from "../lib/enum";
-import { 
+import {
   getMonthList,
   getNewDateByMonth,
   getNewDateByYear,
   getIsDateBeHindCompareDate,
   stringifyDate,
   parseStrDate,
-  validDate
-} from "../lib/utility"
+  validDate,
+} from "../lib/utility";
 
 export default {
   props: {
@@ -127,34 +121,37 @@ export default {
         month: 0,
         date: 0,
       },
+      compare: {
+        year: 0,
+        month: 0,
+        date: 0,
+      },
       isStartPickRange: false,
+      isDateRevert: true,
     };
   },
   mounted() {
-    let isDefaulPropValid = false
-    if(
-      validDate(this.defaultStartVal) && 
-      validDate(this.defaultEndVal) 
-    ) {
-      this.startPickDate = { ...this.defaultStartVal }
-      this.endPickDate = { ...this.defaultEndVal }
-      isDefaulPropValid = true
+    let isDefaulPropValid = false;
+    if (validDate(this.defaultStartVal) && validDate(this.defaultEndVal)) {
+      this.startPickDate = { ...this.defaultStartVal };
+      this.endPickDate = { ...this.defaultEndVal };
+      isDefaulPropValid = true;
     }
-    let baseStartDate = isDefaulPropValid ? this.startPickDate : this.now
+    let baseStartDate = isDefaulPropValid ? this.startPickDate : this.now;
     this.setCurrnetDate(
-      "previous", 
-      baseStartDate.year, 
-      baseStartDate.month, 
+      "previous",
+      baseStartDate.year,
+      baseStartDate.month,
       baseStartDate.date
     );
     this.setCurrentMonthList(
-      "previous", 
-      baseStartDate.year, 
+      "previous",
+      baseStartDate.year,
       baseStartDate.month
     );
     const nextMonthDateObj = getNewDateByMonth(
-      baseStartDate.year, 
-      baseStartDate.month, 
+      baseStartDate.year,
+      baseStartDate.month,
       baseStartDate.date,
       1
     );
@@ -192,19 +189,21 @@ export default {
         this.previousMonthDateList,
         this.previous.currentMonth
       ).map((item) => {
-        const dateStr = `${item.year}/${item.month}/${item.date}`;
-        const active =
-          stringifyDate(this.startPickDate) === stringifyDate(item) ||
+        const equalFirst =
+          stringifyDate(this.startPickDate) === stringifyDate(item);
+        const equalLast =
           stringifyDate(this.endPickDate) === stringifyDate(item);
+        const active = equalFirst || equalLast
         return {
           ...item,
           active,
-          isInRange: (
+          equalFirst,
+          equalLast,
+          isInRange:
             !item.disabled &&
             !active &&
             !getIsDateBeHindCompareDate(this.startPickDate, item) &&
-            getIsDateBeHindCompareDate(this.endPickDate, item)
-          ),
+            getIsDateBeHindCompareDate(this.endPickDate, item),
         };
       });
     },
@@ -213,36 +212,34 @@ export default {
         this.presentMonthDateList,
         this.present.currentMonth
       ).map((item) => {
-        const active =
-          stringifyDate(this.startPickDate) === stringifyDate(item) ||
+        const equalFirst =
+          stringifyDate(this.startPickDate) === stringifyDate(item);
+        const equalLast =
           stringifyDate(this.endPickDate) === stringifyDate(item);
+        const active = equalFirst || equalLast
         return {
           ...item,
           active,
-          isInRange: (
+          equalFirst,
+          equalLast,
+          isInRange:
             !item.disabled &&
             !active &&
             !getIsDateBeHindCompareDate(this.startPickDate, item) &&
-            getIsDateBeHindCompareDate(this.endPickDate, item)
-          ),
+            getIsDateBeHindCompareDate(this.endPickDate, item),
         };
       });
     },
   },
   methods: {
-    formatMonthListHelper(
-      ary,
-      currentMonth
-    ) {
-      return ary.map(item => {
+    formatMonthListHelper(ary, currentMonth) {
+      return ary.map((item) => {
         return {
           ...item,
           disabled: item.month !== currentMonth,
-          isToday: (
-            stringifyDate(item) === stringifyDate(this.now)
-          )
-        }
-      })
+          isToday: stringifyDate(item) === stringifyDate(this.now),
+        };
+      });
     },
     setCurrnetDate(type, year, month, date) {
       const obj = {
@@ -299,29 +296,42 @@ export default {
         year: presentY,
         month: presentM,
         date: presentD,
-      } = getNewDateByYear(previousY, previousM, previousD, 1);
+      } = getNewDateByMonth(previousY, previousM, previousD, 1);
       this.setCurrnetDate("previous", previousY, previousM, previousD);
       this.setCurrnetDate("present", presentY, presentM, presentD);
       this.setCurrentMonthList("previous", previousY, previousM);
       this.setCurrentMonthList("present", presentY, presentM);
     },
-    onDatePick({ year, month, date }) {
+    onDatePick({ year, month, date }, e) {
+      e.target.classList.add("active")
       if (!this.isStartPickRange) {
         this.isStartPickRange = true;
         this.endPickDate = { year: 0, month: 0, date: 0 };
-        this.startPickDate = { year, month, date };
+        this.startPickDate = { year: 0, month: 0, date: 0 };
+        this.compare = { year, month, date };
         return;
       } else {
-        this.endPickDate = { year, month, date };
         this.$emit("onDatePick", {
           start: this.startPickDate,
           end: this.endPickDate,
         });
       }
     },
-    onDateHover({ year, month, date, disabled}) {
-      if(!this.isStartPickRange || disabled) return
-      this.endPickDate = { year, month, date };
+    onDateHover({ year, month, date, disabled }) {
+      if (!this.isStartPickRange || disabled) return;
+      this.isDateRevert = getIsDateBeHindCompareDate(this.compare, {
+        year,
+        month,
+        date,
+      });
+      this.isDateRevert
+        ? (this.endPickDate = this.compare)
+        : (this.startPickDate = this.compare);
+      if (this.isDateRevert) {
+        this.startPickDate = { year, month, date };
+      } else {
+        this.endPickDate = { year, month, date };
+      }
     },
   },
 };
@@ -336,8 +346,8 @@ export default {
     content: "";
     display: inline-block;
     position: absolute;
-    top: -3px;
-    bottom: 6px;
+    top: 2px;
+    bottom: 2px;
     background-color: #f2f8ff;
     z-index: -2;
   }
@@ -345,14 +355,14 @@ export default {
     content: "";
     display: inline-block;
     position: absolute;
-    left: 51%;
-    top: 32%;
+    left: 50%;
+    top: 50%;
     transform: translate(-50%, -50%);
     background-color: #409eff;
     border-radius: 100%;
     z-index: -1;
-    width: 25px;
-    height: 25px;
+    width: 23px;
+    height: 23px;
   }
 }
 
@@ -401,18 +411,8 @@ export default {
     &__date__wrapper {
       display: flex;
       flex-wrap: wrap;
-
-      &.startPick {
-        > div:not(.disabled):hover {
-          @extend %active;
-          &::after {
-            left: 0px;
-            right: 5px;
-          }
-        }
-      }
       > div {
-        padding-bottom: 10px;
+        padding: 5px 0;
         max-width: (100% / 7);
         font-size: 12px;
         text-align: center;
@@ -427,11 +427,19 @@ export default {
         &.disabled {
           color: #ddd;
         }
-        &.active {
+        &:not(.disabled).active {
           @extend %active;
-          &::after {
-            left: 5px;
+          &.equalFirst::after {
+            left: 15px;
             right: 0px;
+          }
+          &.equalLast::after {
+            left: 0px;
+            right: 15px;
+          }
+          &.equalFirst.equalLast::after {
+            left: 15px;
+            right: 15px;
           }
         }
         &.inrange {
@@ -441,15 +449,12 @@ export default {
             position: absolute;
             left: 0px;
             right: 0px;
-            top: -3px;
-            bottom: 6px;
+            top: 2px;
+            bottom: 2px;
             background-color: #f2f8ff;
             z-index: -1;
           }
         }
-      }
-      > div:nth-child(n + 36) {
-        padding-bottom: 0;
       }
     }
   }

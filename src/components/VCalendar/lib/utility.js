@@ -1,5 +1,5 @@
 export const validDate = function(date) {
-  return typeof date === "object" && date.year && date.month && date.year
+  return typeof date === "object" && date.year && date.month + 1 && date.year
 }
 
 export const stringifyDate = function(date) {

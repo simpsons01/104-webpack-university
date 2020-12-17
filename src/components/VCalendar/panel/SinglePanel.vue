@@ -6,15 +6,15 @@
     <div class="VCalendar__panel__container">
        <div class="VCalendar__panel__container__top__control">
          <div class="VCalendar__panel__container__top__control__left">
-           <button @click="setCurrentDateAndMonthListByMonth(-1)">&#8249;</button>
-           <button @click="setCurrentDateAndMonthListByYear(-1)">&#171;</button>
+           <button @click="setCurrentDateAndMonthListByYear(-1)">&#8249;</button>
+           <button @click="setCurrentDateAndMonthListByMonth(-1)">&#171;</button>
          </div>
          <div class="VCalendar__panel__container__top__control__center">
             {{ topControlText }}
          </div>
          <div class="VCalendar__panel__container__top__control__right">
-           <button @click="setCurrentDateAndMonthListByYear(1)">&#187;</button>
-           <button @click="setCurrentDateAndMonthListByMonth(1)">&#8250;</button>
+           <button @click="setCurrentDateAndMonthListByMonth(1)">&#187;</button>
+           <button @click="setCurrentDateAndMonthListByYear(1)">&#8250;</button>
          </div>
        </div>
        <div class="VCalendar__panel__container__week">
@@ -71,26 +71,29 @@ export default {
         month: 0,
         date: 0
       },
+      selected: {
+        year: 0,
+        month: 0,
+        date: 0
+      },
       monthDateList: [],
     };
   },
   mounted() {
+    let isDefaultPropValid = false
     if(validDate(this.defaultVal)) {
-      this.setCurrnetDate(
-        this.defaultVal.year,
-        this.defaultVal.month,
-        this.defaultVal.date
-      )
-    }else {
-      this.setCurrnetDate(
-        this.now.year,
-        this.now.month,
-        this.now.date
-      )
+      this.selected = { ...this.defaultVal }
+      isDefaultPropValid = true
     }
+    let baseStartDate = isDefaultPropValid ? this.selected : this.now
+    this.setCurrnetDate(
+      baseStartDate.year,
+      baseStartDate.month,
+      baseStartDate.date,
+    )
     this.setCurrentMonthList(
-      this.current.year,
-      this.current.month
+      baseStartDate.year,
+      baseStartDate.month
     )
   },
   computed: {
@@ -102,7 +105,7 @@ export default {
         return {
           ...item,
           disabled: item.month !== this.current.month,
-          active: stringifyDate(item) === stringifyDate(this.current),
+          active: stringifyDate(item) === stringifyDate(this.selected),
           isToday: stringifyDate(item) === stringifyDate(this.now)
         }
       })
@@ -120,7 +123,12 @@ export default {
       this.monthDateList = getMonthList(year, month)
     },
     setCurrentDateAndMonthListByMonth(add) {
-      const { year, month, date } = getNewDateByMonth(this.current, add)
+      const { year, month, date } = getNewDateByMonth(
+        this.current.year,
+        this.current.month,
+        this.current.date, 
+        add
+      )
       this.setCurrnetDate(
         year,
         month,
@@ -132,7 +140,12 @@ export default {
       )
     },
     setCurrentDateAndMonthListByYear(add) {
-      const { year, month, date } = getNewDateByYear(this.current, add)
+      const { year, month, date } = getNewDateByYear(
+        this.current.year,
+        this.current.month,
+        this.current.date, 
+        add
+      )
       this.setCurrnetDate(
         year,
         month,
@@ -144,7 +157,8 @@ export default {
       )
     },
     onDatePick(val) {
-      this.$emit("onDatePick", val)
+      this.selected = { ...val }
+      this.$emit("onDatePick", this.selected)
     }
   }
 };

@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <VCalendar />
+    <VCalendar  :rangeOn="false" />
   </div>
 </template>
 

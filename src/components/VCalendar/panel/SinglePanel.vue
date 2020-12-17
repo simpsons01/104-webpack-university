@@ -44,161 +44,83 @@
 </template>
 
 <script>
+import panelMixin from "../lib/mixin";
+import { weeks } from "../lib/enum";
+import {
+  getMonthList,
+  getNewDateByMonth,
+  getNewDateByYear,
+  getIsDateBeHindCompareDate,
+  stringifyDate,
+  parseStrDate,
+  validDate,
+} from "../lib/utility";
 export default {
   props: {
     defaultVal: {
-      type: String,
-      default: ""
+      type: Object,
+      default: () => ({ year: 0, month: 0, date: 0 })
     }
   },
+  mixins: [panelMixin],
   data() {
     return {
-      weeks: [
-        {
-          weekIndex: 0,
-          text: '日',
-        },
-        {
-          weekIndex: 1,
-          text: '一',
-        },
-        {
-          weekIndex: 2,
-          text: '二',
-        },
-        {
-          weekIndex: 3,
-          text: '三',
-        },
-        {
-          weekIndex: 4,
-          text: '四',
-        },
-        {
-          weekIndex: 5,
-          text: '五',
-        },
-        {
-          weekIndex: 6,
-          text: '六',
-        },
-      ],
-      nowYear: 0,
-      nowMonth: 0,
-      nowDate: 0,
-      currentYear: 0,
-      currentMonth: 0,
-      currentDate: 0,
-      monthDateList: [],
-      // rangeOn property
-      startPickeDate: {
+      weeks,
+      current: {
         year: 0,
         month: 0,
         date: 0
       },
-      endPickDate: {
-        year: 0,
-        month: 0,
-        date: 0
-      }
+      monthDateList: [],
     };
   },
   mounted() {
-    const dateObj = new Date()
-    this.nowYear = dateObj.getFullYear(),
-    this.nowMonth = dateObj.getMonth(),
-    this.nowDate = dateObj.getDate()
-    if(this.calcDefaultVal.every(x => x > 0)) {
+    if(validDate(this.defaultVal)) {
       this.setCurrnetDate(
-        this.calcDefaultVal[0],
-        this.calcDefaultVal[1] - 1,
-        this.calcDefaultVal[2]
+        this.defaultVal.year,
+        this.defaultVal.month,
+        this.defaultVal.date
       )
     }else {
       this.setCurrnetDate(
-        this.nowYear,
-        this.nowMonth,
-        this.nowDate
+        this.now.year,
+        this.now.month,
+        this.now.date
       )
     }
     this.setCurrentMonthList(
-      this.currentYear,
-      this.currentMonth
+      this.current.year,
+      this.current.month
     )
   },
   computed: {
     topControlText() {
-      return this.currentYear  + "年" + (this.currentMonth * 1 + 1) + "月"
-    },
-    calcDefaultVal() {
-      const [year, month, date] = this.defaultVal ? this.defaultVal.split("/") : [-1, -1, -1] 
-      return [year * 1, month * 1, date * 1]
+      return this.current.year  + "年" + (this.current.month * 1 + 1) + "月"
     },
     calcMonthList() {
       return this.monthDateList.map(item => {
         return {
           ...item,
-          disabled: item.month !== this.currentMonth + 1,
-          active: (
-            item.year === this.calcDefaultVal[0] &&
-            item.month === this.calcDefaultVal[1] &&
-            item.date === this.calcDefaultVal[2]
-          ),
-          isToday: (
-            item.year === this.nowYear &&
-            item.month === this.nowMonth + 1 &&
-            item.date === this.nowDate
-          )
+          disabled: item.month !== this.current.month,
+          active: stringifyDate(item) === stringifyDate(this.current),
+          isToday: stringifyDate(item) === stringifyDate(this.now)
         }
       })
     }
   },
   methods: {
-    getMonthList(calcYear, calcMonth) {
-      const firsDayInCurrentMonth = new Date(
-        calcYear,
-        calcMonth,
-        1
-      );
-      const firstDayInWeek = firsDayInCurrentMonth.getDay()
-      const dayBeforeFirsDayInCurrentMonth = new Date(
-        calcYear,
-        calcMonth,
-        (1 - (firstDayInWeek ? firstDayInWeek : 7))
-      )
-      const year = dayBeforeFirsDayInCurrentMonth.getFullYear()
-      const month = dayBeforeFirsDayInCurrentMonth.getMonth()
-      const date =  dayBeforeFirsDayInCurrentMonth.getDate()
-      const ary = [];
-      for (let i = 0; i < panelMaxItems; i += 1) {
-        const dateObj = new Date(
-          year, month, date + i
-        );
-        ary.push({
-          year: dateObj.getFullYear(),
-          month: dateObj.getMonth() + 1,
-          date: dateObj.getDate(),
-        });
-      }
-      return ary
-    },
     setCurrnetDate(year, month, date) {
-      this.currentYear = year
-      this.currentMonth = month
-      this.currentDate = date
+      this.current = {
+        year,
+        month,
+        date
+      }
     }, 
     setCurrentMonthList(year, month) {
-      this.monthDateList = this.getMonthList(year, month)
+      this.monthDateList = getMonthList(year, month)
     },
     setCurrentDateAndMonthListByMonth(add) {
-      const dateObj = new Date(
-        this.currentYear + add,
-        this.currentMonth,
-        this.currentDate
-      )
-      const year = dateObj.getFullYear()
-      const month = dateObj.getMonth()
-      const date = dateObj.getDate()
+      const { year, month, date } = getNewDateByMonth(this.current, add)
       this.setCurrnetDate(
         year,
         month,
@@ -210,14 +132,7 @@ export default {
       )
     },
     setCurrentDateAndMonthListByYear(add) {
-      const dateObj = new Date(
-        this.currentYear,
-        this.currentMonth + add,
-        this.currentDate
-      )
-      const year = dateObj.getFullYear()
-      const month = dateObj.getMonth()
-      const date = dateObj.getDate()
+      const { year, month, date } = getNewDateByYear(this.current, add)
       this.setCurrnetDate(
         year,
         month,
@@ -236,7 +151,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import  './variables';
+@import  '../variables';
 
 .VCalendar__panel {
   background-color: $white;

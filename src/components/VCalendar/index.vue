@@ -1,11 +1,11 @@
 <template>
-  <RangeCalendar />
+  <component :is="name" />
 </template>
 
 
 <script>
 import RangeCalendar from "./RangeCalendar.vue";
-//import SingleCalendar from "./panel/SingleCalendar";
+import SingleCalendar from "./SingleCalendar.vue";
 
 export default {
   name: "VCalendar",
@@ -15,8 +15,14 @@ export default {
       default: false,
     },
   },
+  computed: {
+    name() {
+      return this.rangeOn ? "RangeCalendar" : "SingleCalendar"
+    }
+  },
   components: {
-    RangeCalendar
+    RangeCalendar,
+    SingleCalendar
   }
 };
 </script>

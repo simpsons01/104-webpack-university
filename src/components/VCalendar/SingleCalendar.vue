@@ -9,7 +9,6 @@
     <div 
       class="VCalendar__input"
       @click="togglePanel"
-      :class="{ 'multi': rangeOn }"
     >
       <input
         ref="VCalendar__input__start"
@@ -17,25 +16,14 @@
         type="text"
         autocomplete="off"
         readonly
-        :value="inputViewText"
+        :value="viewDate"
       />
-      <template v-if="rangeOn">
-        <span class="VCalendar__input__tilde">~</span>
-        <input
-          class="VCalendar__input__end"
-          type="text"
-          autocomplete="off"
-          readonly
-          value=""
-        />
-      </template>
     </div>
     <transition name="panel">
       <div class="VCalendar__panel__wrapper" v-if="isPanelShow">
-        <Panel
+        <SinglePanel
           ref="VCalendar__panel"
-          :defaultVal="inputViewText"
-          :isRangeOn="rangeOn"
+          :defaultVal="date"
           @onDatePick="onDatePickeHandler"
         />
       </div>
@@ -46,23 +34,26 @@
 
 <script>
 import Vue from "vue";
-import Panel from "./panel.vue";
+import SinglePanel from "./panel/SinglePanel.vue";
+import {
+  getMonthList,
+  getNewDateByMonth,
+  getNewDateByYear,
+  getIsDateBeHindCompareDate,
+  stringifyDate,
+  parseStrDate,
+  validDate,
+} from "./lib/utility";
 
 export default {
   name: "VCalendar",
-  props: {
-    rangeOn: {
-      type: Boolean,
-      default: false,
-    },
-  },
   components: {
-    Panel,
+    SinglePanel,
   },
   data() {
     return {
       isPanelShow: false,
-      selectedVal: {
+      date: {
         year: 0,
         month: 0,
         date: 0,
@@ -70,14 +61,13 @@ export default {
     };
   },
   computed: {
-    inputViewText() {
-      const { year, month, date } = this.selectedVal;
-      if (year && month && date) {
-        return `${year}/${month}/${date}`;
-      } else {
-        return "";
-      }
-    },
+     viewDate() {
+       const date = {
+         ...this.date,
+         month: this.date.month + 1
+       }
+       return validDate(this.date) ? stringifyDate(date) : ""
+     },
   },
   watch: {
     isPanelShow(newVal) {
@@ -93,7 +83,7 @@ export default {
       this.isPanelShow = !this.isPanelShow;
     },
     onDatePickeHandler(val) {
-      this.selectedVal = { ...val };
+      this.date = { ...val };
       this.isPanelShow = false;
     },
     onDocumentClickHandler(e) {
@@ -132,7 +122,7 @@ export default {
   position: relative;
   margin: 150px auto;
   padding: 4px 10px;
-  width: 250px;
+  width: 150px;
   height: 40px;
   background-color: $gray;
   border-radius: 6px;

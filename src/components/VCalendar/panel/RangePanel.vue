@@ -1,21 +1,21 @@
 <template>
   <div class="VCalendar__panel">
-    <div class="VCalendar__panel__previous">
-      <div class="VCalendar__panel__previous__top__control">
-        <div class="VCalendar__panel__previous__top__control__left">
+    <div class="VCalendar__panel__container previous">
+      <div class="VCalendar__panel__container__top__control">
+        <div class="VCalendar__panel__container__top__control__left">
           <button @click="setCurrentDateAndMonthListByYear(-1)">&#8249;</button>
           <button @click="setCurrentDateAndMonthListByMonth(-1)">&#171;</button>
         </div>
-        <div class="VCalendar__panel__previous__top__control__center">
+        <div class="VCalendar__panel__container__top__control__center">
           {{ topPreviousControlText }}
         </div>
       </div>
-      <div class="VCalendar__panel__previous__week">
+      <div class="VCalendar__panel__container__week">
         <div v-for="(week, index) in weeks" :key="index">
           {{ week.text }}
         </div>
       </div>
-      <div class="VCalendar__panel__previous__date__wrapper">
+      <div class="VCalendar__panel__container__date__wrapper">
         <div
           v-for="(item, index) in calcPreviousMonthList"
           :key="index"
@@ -25,7 +25,7 @@
             isToday: item.isToday,
             inrange: item.isInRange,
             equalFirst: item.equalFirst,
-            equalLast: item.equalLast
+            equalLast: item.equalLast,
           }"
           @click="onDatePick(item, $event)"
           @mouseover="onDateHover(item)"
@@ -34,22 +34,22 @@
         </div>
       </div>
     </div>
-    <div class="VCalendar__panel__present">
-      <div class="VCalendar__panel__present__top__control">
-        <div class="VCalendar__panel__present__top__control__center">
+    <div class="VCalendar__panel__container present">
+      <div class="VCalendar__panel__container__top__control">
+        <div class="VCalendar__panel__container__top__control__center">
           {{ topPresentControlText }}
         </div>
-        <div class="VCalendar__panel__present__top__control__right">
+        <div class="VCalendar__panel__container__top__control__right">
           <button @click="setCurrentDateAndMonthListByMonth(1)">&#187;</button>
           <button @click="setCurrentDateAndMonthListByYear(1)">&#8250;</button>
         </div>
       </div>
-      <div class="VCalendar__panel__present__week">
+      <div class="VCalendar__panel__container__week">
         <div v-for="(week, index) in weeks" :key="index">
           {{ week.text }}
         </div>
       </div>
-      <div class="VCalendar__panel__present__date__wrapper">
+      <div class="VCalendar__panel__container__date__wrapper">
         <div
           v-for="(item, index) in calcPresentMonthList"
           :key="index"
@@ -59,7 +59,7 @@
             isToday: item.isToday,
             inrange: item.isInRange,
             equalFirst: item.equalFirst,
-            equalLast: item.equalLast
+            equalLast: item.equalLast,
           }"
           @click="onDatePick(item, $event)"
           @mouseover="onDateHover(item)"
@@ -72,7 +72,7 @@
 </template>
 
 <script>
-import panelMixin from "../lib/mixin";
+import panelMixin from "../mixin/panel";
 import { weeks } from "../lib/enum";
 import {
   getMonthList,
@@ -193,7 +193,7 @@ export default {
           stringifyDate(this.startPickDate) === stringifyDate(item);
         const equalLast =
           stringifyDate(this.endPickDate) === stringifyDate(item);
-        const active = equalFirst || equalLast
+        const active = equalFirst || equalLast;
         return {
           ...item,
           active,
@@ -216,7 +216,7 @@ export default {
           stringifyDate(this.startPickDate) === stringifyDate(item);
         const equalLast =
           stringifyDate(this.endPickDate) === stringifyDate(item);
-        const active = equalFirst || equalLast
+        const active = equalFirst || equalLast;
         return {
           ...item,
           active,
@@ -303,7 +303,7 @@ export default {
       this.setCurrentMonthList("present", presentY, presentM);
     },
     onDatePick({ year, month, date }, e) {
-      e.target.classList.add("active")
+      e.target.classList.add("active");
       if (!this.isStartPickRange) {
         this.isStartPickRange = true;
         this.endPickDate = { year: 0, month: 0, date: 0 };
@@ -338,10 +338,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import "../variables";
+@import "../scss/panel.scss";
 
 %active {
-  color: $white;
+  color: #fff;
   &::after {
     content: "";
     display: inline-block;
@@ -367,59 +367,24 @@ export default {
 }
 
 .VCalendar__panel {
-  background-color: $white;
-  display: flex;
-  &__previous,
-  &__present {
+  &__container {
     padding: 20px 10px;
-    width: 300px;
-    color: #292929;
-    position: relative;
-    z-index: 2;
-    overflow: hidden;
-    &__top__control {
-      display: flex;
-      &__left,
-      &__right {
-        > button {
-          padding: 5px 7px 7px 7px;
-          font-size: 18px;
-          background-color: transparent;
-          border: 0;
-          outline: none;
-          line-height: 18px;
-          cursor: pointer;
-        }
-      }
-      &__center {
-        font-size: 18px;
-        text-align: center;
-        flex: 1 0 auto;
-        line-height: 30px;
+
+    &.previous {
+      &::before {
+        content: "";
+        display: inline-block;
+        position: absolute;
+        width: 1px;
+        right: 0px;
+        top: 0px;
+        bottom: 0px;
+        background-color: #d2d0d0;
       }
     }
-    &__week {
-      display: flex;
-      > div {
-        padding: 8px 0;
-        max-width: (100% / 7);
-        font-size: 12px;
-        text-align: center;
-        flex: 0 0 (100% / 7);
-      }
-    }
+
     &__date__wrapper {
-      display: flex;
-      flex-wrap: wrap;
       > div {
-        padding: 5px 0;
-        max-width: (100% / 7);
-        font-size: 12px;
-        text-align: center;
-        flex: 0 0 (100% / 7);
-        cursor: pointer;
-        position: relative;
-        z-index: 1;
         &:hover,
         &.isToday {
           color: #409eff;
@@ -456,18 +421,6 @@ export default {
           }
         }
       }
-    }
-  }
-  &__previous {
-    &::before {
-      content: "";
-      display: inline-block;
-      position: absolute;
-      width: 1px;
-      right: 0px;
-      top: 0px;
-      bottom: 0px;
-      background-color: #d2d0d0;
     }
   }
 }

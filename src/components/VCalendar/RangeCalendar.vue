@@ -48,16 +48,16 @@ import {
   parseStrDate,
   validDate
 } from "./lib/utility"
-
+import editorMixin from "./mixin/editor";
 
 export default {
   name: "RangeCalendar",
+  mixins: [editorMixin],
   components: {
     RangePanel,
   },
   data() {
     return {
-      isPanelShow: false,
       startDate: {
         year: 0,
         month: 0,
@@ -86,27 +86,7 @@ export default {
        return validDate(this.endDate) ? stringifyDate(date) : ""
      }
   },
-  watch: {
-    isPanelShow(newVal) {
-      if (newVal) {
-        document.addEventListener("click", this.onDocumentClickHandler);
-      } else {
-        document.removeEventListener("click", this.onDocumentClickHandler);
-      }
-    },
-  },
   methods: {
-    togglePanel() {
-      this.isPanelShow = !this.isPanelShow;
-    },
-    onDocumentClickHandler(e) {
-      if (
-        this.$refs["VCalendar__panel"].$el.contains(e.target) ||
-        this.$refs["VCalendar"].contains(e.target)
-      )
-        return;
-      this.isPanelShow = false;
-    },
     onDatePick({ start, end }) {
       this.startDate = { ...start }
       this.endDate = { ...end }
@@ -117,92 +97,15 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import "./variables";
-
-.panel-enter-active,
-.panel-leave-active {
-  transition: 0.3s transform ease, 0.2s opacity ease;
-}
-
-.panel-enter,
-.panel-leave-to {
-  opacity: 0;
-  transform: translateY(100%) scaleY(0) !important;
-}
-
-.panel-leave,
-.panel-enter-to {
-  opacity: 1;
-  transform: translateY(100%) scaleY(1) !important;
-}
-
+@import "./scss/editor.scss";
+@import "./scss/transition.scss";
 .VCalendar {
-  position: relative;
-  margin: 150px;
-  padding: 4px 10px;
-  width: 250px;
-  height: 40px;
-  background-color: $gray;
-  border-radius: 6px;
-  box-sizing: border-box;
-  border: 1px solid $gray;
-  &.active {
-    border: 1px solid #409eff;
-  }
-  &.active &__panel__wrapper {
-    &::before {
-      opacity: 1;
-    }
-  }
+  min-width: 250px;
   &__input {
-    display: flex;
     &__start,
     &__end {
-      box-sizing: border-box;
-      padding: 7px 14px;
       max-width: 50%;
-      font-size: 12px;
-      background-color: $gray;
-      border: 0;
-      outline: none;
-      appearance: none;
       flex: 0 0 50%;
-      line-height: 16px;
-      letter-spacing: 1.5px;
-      text-align: center;
-    }
-    &__tilde {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      color: #b5abab;
-    }
-  }
-  &__panel__wrapper {
-    position: absolute;
-    bottom: -15px;
-    left: 0;
-    transform: translateY(100%);
-    transform-origin: top;
-    box-shadow: 0 0 4px 0 #a9a9a9;
-    display: flex;
-    &::before {
-      content: "";
-      display: inline-block;
-      position: absolute;
-      top: -5px;
-      left: 10px;
-      width: 0;
-      height: 0;
-      border-style: solid;
-      border-width: 10px 10px 0 0;
-      border-color: $white $white transparent transparent;
-      box-shadow: -1px -1px 2px #d4d1d1;
-      transform: rotate(45deg);
-      z-index: -1;
-      opacity: 0;
-      transition: 0.3s opacity ease-in-out;
     }
   }
 }

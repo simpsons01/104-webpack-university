@@ -1,50 +1,44 @@
 <template>
-  <div
-    ref="VCalendar__panel"
-    class="VCalendar__panel"
-  >
+  <div ref="VCalendar__panel" class="VCalendar__panel">
     <div class="VCalendar__panel__container">
-       <div class="VCalendar__panel__container__top__control">
-         <div class="VCalendar__panel__container__top__control__left">
-           <button @click="setCurrentDateAndMonthListByYear(-1)">&#8249;</button>
-           <button @click="setCurrentDateAndMonthListByMonth(-1)">&#171;</button>
-         </div>
-         <div class="VCalendar__panel__container__top__control__center">
-            {{ topControlText }}
-         </div>
-         <div class="VCalendar__panel__container__top__control__right">
-           <button @click="setCurrentDateAndMonthListByMonth(1)">&#187;</button>
-           <button @click="setCurrentDateAndMonthListByYear(1)">&#8250;</button>
-         </div>
-       </div>
-       <div class="VCalendar__panel__container__week">
-          <div
-            v-for="(week, index) in weeks"
-            :key="index"
-          >
-            {{ week.text }}
-          </div>
-       </div>
-       <div class="VCalendar__panel__container__date__wrapper">
-          <div
-            v-for="(item, index) in calcMonthList"
-            :key="index"
-            :class="{
-              disabled: item.disabled,
-              active: item.active,
-              isToday: item.isToday
-            }"
-            @click="onDatePick(item)"
-          >
-           {{ item.date }}
-          </div>
-       </div>
+      <div class="VCalendar__panel__container__top__control">
+        <div class="VCalendar__panel__container__top__control__left">
+          <button @click="setCurrentDateAndMonthListByYear(-1)">&#8249;</button>
+          <button @click="setCurrentDateAndMonthListByMonth(-1)">&#171;</button>
+        </div>
+        <div class="VCalendar__panel__container__top__control__center">
+          {{ topControlText }}
+        </div>
+        <div class="VCalendar__panel__container__top__control__right">
+          <button @click="setCurrentDateAndMonthListByMonth(1)">&#187;</button>
+          <button @click="setCurrentDateAndMonthListByYear(1)">&#8250;</button>
+        </div>
+      </div>
+      <div class="VCalendar__panel__container__week">
+        <div v-for="(week, index) in weeks" :key="index">
+          {{ week.text }}
+        </div>
+      </div>
+      <div class="VCalendar__panel__container__date__wrapper">
+        <div
+          v-for="(item, index) in calcMonthList"
+          :key="index"
+          :class="{
+            disabled: item.disabled,
+            active: item.active,
+            isToday: item.isToday,
+          }"
+          @click="onDatePick(item)"
+        >
+          {{ item.date }}
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import panelMixin from "../lib/mixin";
+import panelMixin from "../mixin/panel";
 import { weeks } from "../lib/enum";
 import {
   getMonthList,
@@ -59,8 +53,8 @@ export default {
   props: {
     defaultVal: {
       type: Object,
-      default: () => ({ year: 0, month: 0, date: 0 })
-    }
+      default: () => ({ year: 0, month: 0, date: 0 }),
+    },
   },
   mixins: [panelMixin],
   data() {
@@ -69,180 +63,114 @@ export default {
       current: {
         year: 0,
         month: 0,
-        date: 0
+        date: 0,
       },
       selected: {
         year: 0,
         month: 0,
-        date: 0
+        date: 0,
       },
       monthDateList: [],
     };
   },
   mounted() {
-    let isDefaultPropValid = false
-    if(validDate(this.defaultVal)) {
-      this.selected = { ...this.defaultVal }
-      isDefaultPropValid = true
+    let isDefaultPropValid = false;
+    if (validDate(this.defaultVal)) {
+      this.selected = { ...this.defaultVal };
+      isDefaultPropValid = true;
     }
-    let baseStartDate = isDefaultPropValid ? this.selected : this.now
+    let baseStartDate = isDefaultPropValid ? this.selected : this.now;
     this.setCurrnetDate(
       baseStartDate.year,
       baseStartDate.month,
-      baseStartDate.date,
-    )
-    this.setCurrentMonthList(
-      baseStartDate.year,
-      baseStartDate.month
-    )
+      baseStartDate.date
+    );
+    this.setCurrentMonthList(baseStartDate.year, baseStartDate.month);
   },
   computed: {
     topControlText() {
-      return this.current.year  + "年" + (this.current.month * 1 + 1) + "月"
+      return this.current.year + "年" + (this.current.month * 1 + 1) + "月";
     },
     calcMonthList() {
-      return this.monthDateList.map(item => {
+      return this.monthDateList.map((item) => {
         return {
           ...item,
           disabled: item.month !== this.current.month,
           active: stringifyDate(item) === stringifyDate(this.selected),
-          isToday: stringifyDate(item) === stringifyDate(this.now)
-        }
-      })
-    }
+          isToday: stringifyDate(item) === stringifyDate(this.now),
+        };
+      });
+    },
   },
   methods: {
     setCurrnetDate(year, month, date) {
       this.current = {
         year,
         month,
-        date
-      }
-    }, 
+        date,
+      };
+    },
     setCurrentMonthList(year, month) {
-      this.monthDateList = getMonthList(year, month)
+      this.monthDateList = getMonthList(year, month);
     },
     setCurrentDateAndMonthListByMonth(add) {
       const { year, month, date } = getNewDateByMonth(
         this.current.year,
         this.current.month,
-        this.current.date, 
+        this.current.date,
         add
-      )
-      this.setCurrnetDate(
-        year,
-        month,
-        date
-      )
-      this.setCurrentMonthList(
-        year,
-        month
-      )
+      );
+      this.setCurrnetDate(year, month, date);
+      this.setCurrentMonthList(year, month);
     },
     setCurrentDateAndMonthListByYear(add) {
       const { year, month, date } = getNewDateByYear(
         this.current.year,
         this.current.month,
-        this.current.date, 
+        this.current.date,
         add
-      )
-      this.setCurrnetDate(
-        year,
-        month,
-        date
-      )
-      this.setCurrentMonthList(
-        year,
-        month
-      )
+      );
+      this.setCurrnetDate(year, month, date);
+      this.setCurrentMonthList(year, month);
     },
     onDatePick(val) {
-      this.selected = { ...val }
-      this.$emit("onDatePick", this.selected)
-    }
-  }
+      this.selected = { ...val };
+      this.$emit("onDatePick", this.selected);
+    },
+  },
 };
 </script>
 
 <style lang="scss" scoped>
-@import  '../variables';
-
+@import "../scss/panel.scss";
 .VCalendar__panel {
-  background-color: $white;
+  background-color: #fff;
   &__container {
-    padding: 20px;
-    width: 300px;
-    color: #292929;
-    position: relative;
-    z-index: 2;
-    overflow: hidden;
-    &__top__control {
-      display: flex;
-      &__left , &__right {
-        > button {
-          padding: 5px 7px 7px 7px;
-          font-size: 18px;
-          background-color: transparent;
-          border: 0;
-          outline: none;
-          line-height: 18px;
-          cursor: pointer;
-        }
-      }
-      &__center {
-        font-size: 18px;
-        text-align: center;
-        flex: 1 0 auto;
-        line-height: 30px;
-      }
-    }
-    &__week {
-      display: flex;
-      > div {
-        padding: 8px 0;
-        max-width: (100% / 7);
-        font-size: 12px;
-        text-align: center;
-        flex: 0 0 (100% / 7);
-      }
-    }
     &__date__wrapper {
-      display: flex;
-      flex-wrap: wrap;
       > div {
-        padding-bottom: 10px;
-        max-width: (100% / 7);
-        font-size: 12px;
-        text-align: center;
-        flex: 0 0 (100% / 7);
-        cursor: pointer;
-        position: relative;
-        z-index: 1;
-        &:hover, &.isToday {
-          color: #409eff
+        &:hover,
+        &.isToday {
+          color: #409eff;
         }
         &.disabled {
-          color: #ddd
+          color: #ddd;
         }
         &.active {
-          color: $white;
+          color: #fff;
           &::before {
             content: "";
             display: inline-block;
             position: absolute;
-            left: 51%;
-            top: 32%;
+            left: 49.5%;
+            top: 50%;
             transform: translate(-50%, -50%);
-            background-color:#409eff;
+            background-color: #409eff;
             border-radius: 100%;
             z-index: -1;
-            width: 25px;
-            height: 25px;
+            width: 23px;
+            height: 23px;
           }
         }
-      }
-      > div:nth-child(n + 36) {
-        padding-bottom: 0;
       }
     }
   }

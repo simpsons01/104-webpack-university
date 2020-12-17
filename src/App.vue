@@ -1,6 +1,7 @@
 <template>
-  <div id="app">
-    <VCalendar  :rangeOn="false" />
+  <div id="app" style="display: flex">
+    <VCalendar style="margin: 100px"  :rangeOn="false" />
+    <VCalendar style="margin: 100px" :rangeOn="true" />
   </div>
 </template>
 
